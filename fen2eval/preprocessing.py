@@ -86,3 +86,17 @@ def load_dataset(csv_path):
         np.stack(X_extra),     # (N, 14)
         np.array(y, dtype=np.float32)  # (N,)
     )
+
+def denormalize_cp(val):
+    """
+    Converts normalized value back to centipawn or mate string.
+    Values near ±10.0 are interpreted as mate scores.
+    """
+    if val >= 9.0:
+        mate_in = round((10.0 - val) * 10)
+        return f"# {mate_in}"
+    elif val <= -9.0:
+        mate_in = round((10.0 + val) * 10)
+        return f"-# {mate_in}"
+    else:
+        return round(val * 100.0, 1)  # centipawn
