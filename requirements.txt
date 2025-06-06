@@ -1,1 +1,7 @@
 streamlit
+python-chess
+torch
+numpy
+matplotlib
+tqdm
+pandas
