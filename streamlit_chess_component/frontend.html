@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.0/chess.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard.min.css" />
+  <style>
+    #board { width: 400px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div id="board"></div>
+  <script>
+    const board = Chessboard('board', {
+      position: '{{FEN}}',
+      draggable: true,
+      dropOffBoard: 'snapback',
+      onDrop: onDrop
+    });
+
+    const game = new Chess('{{FEN}}');
+
+    function onDrop(source, target) {
+      const move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q'
+      });
+
+      if (move === null) return 'snapback';
+
+      board.position(game.fen());
+      const data = { fen: game.fen() };
+      window.parent.postMessage(data, "*");
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.data.type === "update") {
+        board.position(event.data.fen);
+        game.load(event.data.fen);
+      }
+    });
+  </script>
+</body>
+</html>
